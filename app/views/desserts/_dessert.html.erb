@@ -1,0 +1,16 @@
+<div id="<%= dom_id dessert %>">
+  <p>
+    <strong>Name:</strong>
+    <%= dessert.name %>
+  </p>
+
+  <!--Show each dessert topping-->
+  <p>
+    <strong>Toppings:</strong>
+    <ul>
+      <% dessert.toppings.each do |topping| %>
+        <li><%= topping.name %></li>
+      <% end %>
+    </ul>
+
+</div>

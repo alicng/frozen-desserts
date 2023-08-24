@@ -1,0 +1,13 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @dessert %>
+
+<div>
+
+  <%= link_to "Add topping", new_topping_path({dessert_id: @dessert}) %>
+
+  <%= link_to "Edit this dessert", edit_dessert_path(@dessert) %> |
+  <%= link_to "Back to desserts", desserts_path %>
+
+  <%= button_to "Destroy this dessert", @dessert, method: :delete %>
+</div>
