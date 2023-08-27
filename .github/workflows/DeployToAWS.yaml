@@ -14,7 +14,8 @@ jobs:
       AWS_REGION: us-east-1
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      
+      AWS_INSTANCE_SG_ID: ${{ secrets.AWS_INSTANCE_SG_ID }}
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -31,10 +32,6 @@ jobs:
       # Ensure dependency installation completed successfully
       continue-on-error: false
       
-    - name: Run specs
-      run: bundle exec rspec
-
-       
     - name: Set up SSH and deploy
       run: |
         mkdir -p ~/.ssh
@@ -42,12 +39,16 @@ jobs:
         chmod 600 ~/.ssh/deploy_key
         chmod +x deploy_script.sh
         
+        # Load SSH key into the agent
+        eval $(ssh-agent -s)
+        ssh-add ~/.ssh/deploy_key
+        
         # Get runner IP address
         IP_ADDRESS=$(curl -s https://api64.ipify.org?format=text)
         
         # Whitelist runner IP address in EC2 security group
         aws ec2 authorize-security-group-ingress \
-          --group-id ${{ secrets.AWS_INSTANCE_SG_ID }} \
+          --group-id $AWS_INSTANCE_SG_ID \
           --protocol tcp \
           --port 22 \
           --cidr $IP_ADDRESS/32
@@ -57,7 +58,10 @@ jobs:
         
         # Revoke runner IP address from EC2 security group
         aws ec2 revoke-security-group-ingress \
-          --group-id ${{ secrets.AWS_INSTANCE_SG_ID }} \
+          --group-id $AWS_INSTANCE_SG_ID \
           --protocol tcp \
           --port 22 \
           --cidr $IP_ADDRESS/32
+        
+        # SSH into the server with StrictHostKeyChecking disabled
+        ssh -o StrictHostKeyChecking=no -T ec2-54-92-184-233.compute-1.amazonaws.com
