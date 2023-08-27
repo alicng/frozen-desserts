@@ -40,11 +40,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "$EC2_SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          chmod +x deploy_script.sh
-
-          # Load SSH key into the agent
-          eval $(ssh-agent -s)
-          ssh-add ~/.ssh/deploy_key
+          chmod 700 ~/.ssh
 
           # Get runner IP address
           IP_ADDRESS=$(curl -s https://api64.ipify.org?format=text)
@@ -67,10 +63,5 @@ jobs:
             --port 22 \
             --cidr $IP_ADDRESS/32
 
-      - name: Update known_hosts
-        run: ssh-keyscan -H ec2-54-92-184-233.compute-1.amazonaws.com >> ~/.ssh/known_hosts
-
       - name: SSH into the server with StrictHostKeyChecking disabled
-        run: ssh -o StrictHostKeyChecking=no -T ec2-54-92-184-233.compute-1.amazonaws.com
-
-
+        run: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -T ec2-54-92-184-233.compute-1.amazonaws.com
