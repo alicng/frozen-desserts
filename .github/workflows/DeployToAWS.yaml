@@ -52,6 +52,9 @@ jobs:
             --port 22 \
             --cidr $IP_ADDRESS/32
 
+          # Give execute permissions to the deployment script
+          chmod +x deploy_script.sh
+
           # Run deployment script
           EC2_INSTANCE_IP="ec2-54-92-184-233.compute-1.amazonaws.com" ./deploy_script.sh
 
@@ -62,6 +65,9 @@ jobs:
             --protocol tcp \
             --port 22 \
             --cidr $IP_ADDRESS/32
+
+      - name: Update known_hosts
+        run: ssh-keyscan -H ec2-54-92-184-233.compute-1.amazonaws.com >> ~/.ssh/known_hosts
 
       - name: SSH into the server with StrictHostKeyChecking disabled
         run: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -T ec2-54-92-184-233.compute-1.amazonaws.com
