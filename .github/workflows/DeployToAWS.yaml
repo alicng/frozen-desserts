@@ -15,53 +15,57 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_INSTANCE_SG_ID: ${{ secrets.AWS_INSTANCE_SG_ID }}
+      EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 3.2.1
-        
-    - name: Install dependencies
-      run: |
-        gem install bundler
-        bundle install --path vendor/bundle
-      # Ensure dependency installation completed successfully
-      continue-on-error: false
-      
-    - name: Set up SSH and deploy
-      run: |
-        mkdir -p ~/.ssh
-        echo "$EC2_SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-        chmod 600 ~/.ssh/deploy_key
-        chmod +x deploy_script.sh
-        
-        # Load SSH key into the agent
-        eval $(ssh-agent -s)
-        ssh-add ~/.ssh/deploy_key
-        
-        # Get runner IP address
-        IP_ADDRESS=$(curl -s https://api64.ipify.org?format=text)
-        
-        # Whitelist runner IP address in EC2 security group
-        aws ec2 authorize-security-group-ingress \
-          --group-id $AWS_INSTANCE_SG_ID \
-          --protocol tcp \
-          --port 22 \
-          --cidr $IP_ADDRESS/32
-        
-        # Run deployment script
-        EC2_INSTANCE_IP="ec2-54-92-184-233.compute-1.amazonaws.com" ./deploy_script.sh
-        
-        # Revoke runner IP address from EC2 security group
-        aws ec2 revoke-security-group-ingress \
-          --group-id $AWS_INSTANCE_SG_ID \
-          --protocol tcp \
-          --port 22 \
-          --cidr $IP_ADDRESS/32
-        
-        # SSH into the server with StrictHostKeyChecking disabled
-        ssh -o StrictHostKeyChecking=no -T ec2-54-92-184-233.compute-1.amazonaws.com
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2.1
+
+      - name: Install dependencies
+        run: |
+          gem install bundler
+          bundle install --path vendor/bundle
+        continue-on-error: false
+
+      - name: Run specs
+        run: bundle exec rspec
+
+      - name: Set up SSH and deploy
+        run: |
+          mkdir -p ~/.ssh
+          echo "$EC2_SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          chmod +x deploy_script.sh
+
+          # Load SSH key into the agent
+          eval $(ssh-agent -s)
+          ssh-add ~/.ssh/deploy_key
+
+          # Get runner IP address
+          IP_ADDRESS=$(curl -s https://api64.ipify.org?format=text)
+
+          # Whitelist runner IP address in EC2 security group
+          aws ec2 authorize-security-group-ingress \
+            --group-id $AWS_INSTANCE_SG_ID \
+            --protocol tcp \
+            --port 22 \
+            --cidr $IP_ADDRESS/32
+
+          # Run deployment script
+          EC2_INSTANCE_IP="ec2-54-92-184-233.compute-1.amazonaws.com" ./deploy_script.sh
+
+          # Revoke runner IP address from EC2 security group
+          aws ec2 revoke-security-group-ingress \
+            --group-id $AWS_INSTANCE_SG_ID \
+            --protocol tcp \
+            --port 22 \
+            --cidr $IP_ADDRESS/32
+
+          # SSH into the server with StrictHostKeyChecking disabled
+          ssh -o StrictHostKeyChecking=no -T ec2-54-92-184-233.compute-1.amazonaws.com
+
