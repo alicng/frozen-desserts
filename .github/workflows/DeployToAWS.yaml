@@ -49,7 +49,7 @@ jobs:
           --group-id ${{ secrets.AWS_INSTANCE_SG_ID }} \
           --protocol tcp \
           --port 22 \
-          --source-cidr $IP_ADDRESS/32
+          --cidr $IP_ADDRESS/32
         
         # Run deployment script
         EC2_INSTANCE_IP="ec2-54-92-184-233.compute-1.amazonaws.com" ./deploy_script.sh
@@ -59,25 +59,4 @@ jobs:
           --group-id ${{ secrets.AWS_INSTANCE_SG_ID }} \
           --protocol tcp \
           --port 22 \
-          --source-cidr $IP_ADDRESS/32
-
-        
-        # Get runner IP address
-        IP_ADDRESS=$(curl -s https://api64.ipify.org?format=text)
-        
-        # Whitelist runner IP address in EC2 security group
-        aws ec2 authorize-security-group-ingress \
-          --group-id $AWS_INSTANCE_SG_ID \
-          --protocol tcp \
-          --port 22 \
-          --source-cidr $IP_ADDRESS/32
-        
-        # Run deployment script
-        EC2_INSTANCE_IP="ec2-54-92-184-233.compute-1.amazonaws.com" ./deploy_script.sh
-        
-        # Revoke runner IP address from EC2 security group
-        aws ec2 revoke-security-group-ingress \
-          --group-id $AWS_INSTANCE_SG_ID \
-          --protocol tcp \
-          --port 22 \
-          --source-cidr $IP_ADDRESS/32
+          --cidr $IP_ADDRESS/32
