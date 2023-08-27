@@ -33,6 +33,10 @@ jobs:
       
     - name: Run specs
       run: bundle exec rspec
+
+    - name: Check host key
+      run: |
+        ssh -T 20.42.22.4
       
     - name: Set up SSH and deploy
       run: |
