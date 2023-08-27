@@ -2,12 +2,11 @@
 
 # Set the SSH directory
 SSH_DIR="$HOME/.ssh"
+SSH_KEY=~/.ssh/deploy_key
 
 # Ensure that the private key is stored in the correct file
 echo "$EC2_SSH_PRIVATE_KEY" > "$SSH_DIR/deploy_key"
 chmod 600 "$SSH_DIR/deploy_key"
-
-# Rest of your deployment steps
 
 # Replace these variables with your actual values
 EC2_USER="$EC2_USER"
@@ -37,3 +36,4 @@ ssh -i "$SSH_DIR/deploy_key" $EC2_USER@$EC2_HOST << EOF
 EOF
 
 echo "Deployment complete"
+
