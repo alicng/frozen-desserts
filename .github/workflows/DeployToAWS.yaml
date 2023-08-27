@@ -59,18 +59,18 @@ jobs:
           # Run deployment script
           EC2_INSTANCE_IP="ec2-54-92-184-233.compute-1.amazonaws.com" ./deploy_script.sh
 
-          - name: Revoke runner IP address from EC2 security group
-            run: |
-              aws ec2 revoke-security-group-ingress \
-                --group-id $AWS_INSTANCE_SG_ID \
-                --protocol tcp \
-                --port 22 \
-                --cidr $IP_ADDRESS/32
+      - name: Revoke runner IP address from EC2 security group
+        run: |
+          aws ec2 revoke-security-group-ingress \
+            --group-id $AWS_INSTANCE_SG_ID \
+            --protocol tcp \
+            --port 22 \
+            --cidr $IP_ADDRESS/32
 
-          - name: Update known_hosts
-            run: ssh-keyscan -H ec2-54-92-184-233.compute-1.amazonaws.com >> ~/.ssh/known_hosts
+      - name: Update known_hosts
+        run: ssh-keyscan -H ec2-54-92-184-233.compute-1.amazonaws.com >> ~/.ssh/known_hosts
 
-          - name: SSH into the server with StrictHostKeyChecking disabled
-            run: ssh -o StrictHostKeyChecking=no -T ec2-54-92-184-233.compute-1.amazonaws.com
+      - name: SSH into the server with StrictHostKeyChecking disabled
+        run: ssh -o StrictHostKeyChecking=no -T ec2-54-92-184-233.compute-1.amazonaws.com
 
 
