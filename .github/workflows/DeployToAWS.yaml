@@ -36,21 +36,30 @@ jobs:
         run: bundle exec rspec
 
       - name: Set up SSH and deploy
+        # run: |
+          # mkdir -p ~/.ssh
+          # echo "$EC2_SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          # chmod 600 ~/.ssh/deploy_key
+          # chmod 700 ~/.ssh
+
+          # # Get runner IP address
+          # IP_ADDRESS=$(curl -s https://api64.ipify.org?format=text)
+
+          # # Whitelist runner IP address in EC2 security group
+          # aws ec2 authorize-security-group-ingress \
+          #   --group-id $AWS_INSTANCE_SG_ID \
+          #   --protocol tcp \
+          #   --port 22 \
+          #   --cidr $IP_ADDRESS/32
+
+        env:
+            PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+            HOSTNAME: ${{secrets.EC2_INSTANCE_IP}}
+            USER_NAME: ${{secrets.EC2_USER}}
+      
         run: |
-          mkdir -p ~/.ssh
-          echo "$EC2_SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          chmod 700 ~/.ssh
-
-          # Get runner IP address
-          IP_ADDRESS=$(curl -s https://api64.ipify.org?format=text)
-
-          # Whitelist runner IP address in EC2 security group
-          aws ec2 authorize-security-group-ingress \
-            --group-id $AWS_INSTANCE_SG_ID \
-            --protocol tcp \
-            --port 22 \
-            --cidr $IP_ADDRESS/32
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '  
 
           # Give execute permissions to the deployment script
           chmod +x deploy_script.sh
@@ -58,16 +67,16 @@ jobs:
           # Run deployment script
           EC2_INSTANCE_IP="ec2-54-92-184-233.compute-1.amazonaws.com" ./deploy_script.sh
 
-      - name: Revoke runner IP address from EC2 security group
-        run: |
-          aws ec2 revoke-security-group-ingress \
-            --group-id $AWS_INSTANCE_SG_ID \
-            --protocol tcp \
-            --port 22 \
-            --cidr $IP_ADDRESS/32
+      # - name: Revoke runner IP address from EC2 security group
+      #   run: |
+      #     aws ec2 revoke-security-group-ingress \
+      #       --group-id $AWS_INSTANCE_SG_ID \
+      #       --protocol tcp \
+      #       --port 22 \
+      #       --cidr $IP_ADDRESS/32
 
-      - name: Update known_hosts
-        run: ssh-keyscan -H ec2-54-92-184-233.compute-1.amazonaws.com >> ~/.ssh/known_hosts
+      # - name: Update known_hosts
+      #   run: ssh-keyscan -H ec2-54-92-184-233.compute-1.amazonaws.com >> ~/.ssh/known_hosts
 
-      - name: SSH into the server with StrictHostKeyChecking disabled
-        run: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -T ec2-54-92-184-233.compute-1.amazonaws.com
+      # - name: SSH into the server with StrictHostKeyChecking disabled
+      #   run: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -T ec2-54-92-184-233.compute-1.amazonaws.com
