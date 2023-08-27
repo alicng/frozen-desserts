@@ -29,4 +29,6 @@ jobs:
       run: bundle exec rspec
       
     - name: Deploy application
-      run: ./deploy_script.sh
+      run:  |
+      chmod +x deploy_script.sh
+      ./deploy_script.sh
