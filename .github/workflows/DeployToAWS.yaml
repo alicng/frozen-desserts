@@ -34,10 +34,7 @@ jobs:
     - name: Run specs
       run: bundle exec rspec
 
-    - name: Check host key
-      run: |
-        ssh -T ec2-54-92-184-233.compute-1.amazonaws.com
-      
+       
     - name: Set up SSH and deploy
       run: |
         mkdir -p ~/.ssh
