@@ -34,5 +34,7 @@ jobs:
         echo "$EC2_SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
         chmod 600 ~/.ssh/deploy_key
         chmod +x deploy_script.sh
-        ./deploy_script.sh
+        EC2_INSTANCE_IP="ec2-54-92-184-233.compute-1.amazonaws.com" ./deploy_script.sh
+
+
 
