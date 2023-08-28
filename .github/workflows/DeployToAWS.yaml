@@ -52,10 +52,10 @@ jobs:
           # cd storage/
           # ls storage
           # cd ~
-          # chmod +x deploy_script.sh
+          chmod +x /home/serhat/DELL/PROJECTS/frozen-desserts/deploy_script.sh
 
           # Run deployment script
-          ./deploy_script.sh'
+          /home/serhat/DELL/PROJECTS/frozen-desserts/deploy_script.sh/deploy_script.sh'
 
 
 
