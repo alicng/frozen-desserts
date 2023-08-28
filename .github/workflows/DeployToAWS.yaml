@@ -46,10 +46,10 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
 
           # Give execute permissions to the deployment script
-          chmod +x deploy_script.sh
+          chmod +x /home/serhat/DELL/PROJECTS/frozen-desserts/.github/workflows/deploy_script.sh
 
           # Run deployment script
-          EC2_INSTANCE_IP="ec2-54-92-184-233.compute-1.amazonaws.com" ./deploy_script.sh'
+          EC2_INSTANCE_IP="$HOSTNAME" ./deploy_script.sh'
 
 
 
