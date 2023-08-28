@@ -45,12 +45,16 @@ jobs:
           echo "Current working directory: $(pwd)"
           ls -lart
 
-          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          # Write and set permissions for the private key
+          echo "$PRIVATE_KEY" > $GITHUB_WORKSPACE/private_key && chmod 600 $GITHUB_WORKSPACE/private_key
 
           # Give execute permissions to the deployment script
           chmod +x deploy_script.sh
 
-          # Run deployment script from the current directory (GitHub Actions workspace)
+          # Navigate to the script directory
+          cd $GITHUB_WORKSPACE
+
+          # Run deployment script
           ./deploy_script.sh
 
 
