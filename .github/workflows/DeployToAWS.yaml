@@ -44,18 +44,18 @@ jobs:
         run: |
           echo "Current working directory: $(pwd)"
           ls -lart
-          
-          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
 
-          # # Give execute permissions to the deployment script
-          # cd storage/
-          # ls storage
-          # cd ~
-          chmod +x /home/serhat/DELL/PROJECTS/frozen-desserts/deploy_script.sh
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+
+          # Navigate to the script directory
+          cd /home/serhat/DELL/PROJECTS/frozen-desserts
+
+          # Give execute permissions to the deployment script
+          chmod +x deploy_script.sh
 
           # Run deployment script
-          /home/serhat/DELL/PROJECTS/frozen-desserts/deploy_script.sh/deploy_script.sh'
+          ./deploy_script.sh
+
 
 
 
