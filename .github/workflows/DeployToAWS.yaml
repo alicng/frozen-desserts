@@ -45,6 +45,22 @@ jobs:
           echo "Current working directory: $(pwd)"
           ls -lart
 
+          echo "User: $USER_NAME"
+          echo "Hostname: $HOSTNAME"
+
+          # ... (other commands)
+
+          # Print debug information
+          echo "Navigating to /home/serhat/DELL/PROJECTS/frozen-desserts"
+          cd /home/serhat/DELL/PROJECTS/frozen-desserts
+
+          # Check if the directory navigation was successful
+          if [ $? -eq 0 ]; then
+            echo "Directory navigation successful"
+          else
+            echo "Directory navigation failed"
+          fi
+
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
 
           # Navigate to the script directory
