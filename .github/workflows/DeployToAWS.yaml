@@ -37,19 +37,22 @@ jobs:
 
       - name: Set up SSH and deploy
         env:
-            PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-            HOSTNAME: ${{ secrets.EC2_INSTANCE_IP }}
-            USER_NAME: ${{ secrets.EC2_USER }}
-      
+          PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          HOSTNAME: ${{ secrets.EC2_INSTANCE_IP }}
+          USER_NAME: ${{ secrets.EC2_USER }}
+        
         run: |
+          echo "Current working directory: $(pwd)"
+          ls -lart
+          
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-          
+
           # Give execute permissions to the deployment script
-          chmod +x /home/serhat/DELL/PROJECTS/frozen-desserts/deploy_script.sh
+          chmod +x deploy_script.sh
 
           # Run deployment script
-          EC2_INSTANCE_IP="$HOSTNAME" /home/serhat/DELL/PROJECTS/frozen-desserts/deploy_script.sh'
+          ./deploy_script.sh'
 
 
 
