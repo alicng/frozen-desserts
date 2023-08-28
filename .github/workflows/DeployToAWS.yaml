@@ -48,11 +48,11 @@ jobs:
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
 
-          # Give execute permissions to the deployment script
-          cd storage/
-          ls storage
-          cd ~
-          chmod +x deploy_script.sh
+          # # Give execute permissions to the deployment script
+          # cd storage/
+          # ls storage
+          # cd ~
+          # chmod +x deploy_script.sh
 
           # Run deployment script
           ./deploy_script.sh'
