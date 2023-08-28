@@ -49,7 +49,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
 
           # Give execute permissions to the deployment script
-          chmod +x deploy_script.sh
+          chmod +x /frozen-desserts/deploy_script.sh
 
           # Run deployment script
           ./deploy_script.sh'
