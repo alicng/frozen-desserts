@@ -69,7 +69,7 @@ jobs:
           # Navigate to the script directory
           cd $GITHUB_WORKSPACE
 
-          # Run deployment script
+          # Run deployment scripts
           ./deploy_script.sh
 
 
