@@ -48,6 +48,16 @@ jobs:
           eval $(ssh-agent -s)
           ssh-add deploy_key id_rsa
 
+          - name: Setup SSH
+        run: |
+          ssh-keygen -f ~/.ssh/deploy_key -t rsa -N ''
+          cat ~/.ssh/deploy_key.pub >> ~/.ssh/authorized_keys
+          chmod 600 ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/authorized_keys
+
+      - name: Run specs
+        run: bundle exec rspec
+
       - name: Run deployment script
         run: |
           # Write and set permissions for the private key
@@ -61,7 +71,6 @@ jobs:
 
           # Run deployment script
           ./deploy_script.sh
-
 
 
 
