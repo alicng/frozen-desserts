@@ -42,26 +42,22 @@ jobs:
 
       - name: Run deployment script
         run: |
-          echo "$DEPLOY_KEY" > deploy_key
-          echo "$ID_RSA" > id_rsa
-          chmod 600 deploy_key id_rsa
-          eval $(ssh-agent -s)
-          ssh-add deploy_key id_rsa
-          echo "Current working directory: $(pwd)"
-          ls -lart
+          e- name: Run deployment script
+    run: |
+        # Move the deploy key file to the .ssh directory
+        mv deploy_key .ssh/
 
-          # Write and set permissions for the private key
-          echo "$PRIVATE_KEY" > $GITHUB_WORKSPACE/private_key && chmod 600 $GITHUB_WORKSPACE/private_key
+        # Write and set permissions for the private key
+        echo "$PRIVATE_KEY" > $GITHUB_WORKSPACE/private_key && chmod 600 $GITHUB_WORKSPACE/private_key
 
-          # Give execute permissions to the deployment script
-          chmod +x deploy_script.sh
+        # Give execute permissions to the deployment script
+        chmod +x deploy_script.sh
 
-          # Navigate to the script directory
-          cd $GITHUB_WORKSPACE
+        # Navigate to the script directory
+        cd $GITHUB_WORKSPACE
 
-          # Run deployment scrip
-          ./deploy_script.sh
-
+        # Run deployment scrip
+        ./deploy_script.sh
 
 
 
