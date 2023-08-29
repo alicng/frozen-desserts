@@ -50,11 +50,8 @@ jobs:
 
       - name: Run deployment script
         run: |
-          # Move the deploy key file to the .ssh directory
-          mv deploy_key .ssh/
-
           # Write and set permissions for the private key
-          echo "$PRIVATE_KEY" > $GITHUB_WORKSPACE/private_key && chmod 600 $GITHUB_WORKSPACE/private_key
+          echo "$PRIVATE_KEY" > $HOME/.ssh/private_key && chmod 600 $HOME/.ssh/private_key
 
           # Give execute permissions to the deployment script
           chmod +x deploy_script.sh
@@ -64,6 +61,7 @@ jobs:
 
           # Run deployment script
           ./deploy_script.sh
+
 
 
 
