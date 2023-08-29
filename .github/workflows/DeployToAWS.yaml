@@ -48,7 +48,7 @@ jobs:
           eval $(ssh-agent -s)
           ssh-add deploy_key id_rsa
 
-          - name: Setup SSH
+      - name: Setup SSH
         run: |
           ssh-keygen -f ~/.ssh/deploy_key -t rsa -N ''
           cat ~/.ssh/deploy_key.pub >> ~/.ssh/authorized_keys
