@@ -1,4 +1,4 @@
-name: Deploy to AWS
+name: Deploy to EC2
 
 on:
   push:
@@ -16,6 +16,11 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_INSTANCE_SG_ID: ${{ secrets.AWS_INSTANCE_SG_ID }}
       EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+      PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+      HOSTNAME: ${{ secrets.EC2_INSTANCE_IP }}
+      USER_NAME: ${{ secrets.EC2_USER }}
+      DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+      ID_RSA: ${{ secrets.ID_RSA }}
 
     steps:
       - name: Checkout code
@@ -35,12 +40,15 @@ jobs:
       - name: Run specs
         run: bundle exec rspec
 
-      - name: Set up SSH and deploy
-        env:
-          PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          HOSTNAME: ${{ secrets.EC2_INSTANCE_IP }}
-          USER_NAME: ${{ secrets.EC2_USER }}
-        
+      - name: Set up SSH keys
+        run: |
+          echo "$DEPLOY_KEY" > deploy_key
+          echo "$ID_RSA" > id_rsa
+          chmod 600 deploy_key id_rsa
+          eval $(ssh-agent -s)
+          ssh-add deploy_key id_rsa
+
+      - name: Run deployment script
         run: |
           echo "Current working directory: $(pwd)"
           ls -lart
@@ -56,11 +64,6 @@ jobs:
 
           # Run deployment script
           ./deploy_script.sh
-
-
-
-
-
 
 
 
